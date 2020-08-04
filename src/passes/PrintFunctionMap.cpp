@@ -33,9 +33,15 @@ struct PrintFunctionMap : public Pass {
   bool modifiesBinaryenIR() override { return false; }
 
   void run(PassRunner* runner, Module* module) override {
-    Index i = 0;
+    Index importableIndex = 0;
+    Index localIndex = 0;
     for (auto& func : module->functions) {
-      std::cout << i++ << ':' << func->name.str << '\n';
+      // is this importable?
+      if (!func->module.isNull() && !func->base.isNull()) {
+        std::cout << "fimport$" << importableIndex++ << ':' << func->name.str << '\n';
+      } else {
+        std::cout << localIndex++ << ':' << func->name.str << '\n';
+      }
     }
   }
 };
